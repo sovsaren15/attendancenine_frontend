@@ -1,11 +1,16 @@
-import AddEmployee from "./pages/AddEmployee"
+import { Route, Routes } from "react-router-dom";
+import EmployeeRegistration from "./pages/EmployeeRegistration.jsx";
+import EmployeeList from "./pages/EmployeeList.jsx";
 
 function App() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-      <AddEmployee />
-    </main>
-  )
+    <Routes>
+      {/* You can add a layout component here if you have one */}
+      <Route path="/register" element={<EmployeeRegistration />} />
+      <Route path="/employees" element={<EmployeeList />} />
+      <Route path="/" element={<EmployeeList />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
