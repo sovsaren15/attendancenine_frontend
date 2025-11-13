@@ -16,7 +16,7 @@ function App() {
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         {/* Routes without Navbar */}
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<Dashboard />} />
         <Route path="/AttendanceScanner" element={<AttendanceScanner />} />
         <Route path="/records" element={<AttendanceRecord />} />
         {/* Routes with Navbar */}
