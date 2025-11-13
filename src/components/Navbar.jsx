@@ -32,7 +32,7 @@ const Navbar = () => {
     >
       <div className="max-w-full px-4 sm:px-6 lg:px-12">
         <div className="relative flex justify-between items-center h-20">
-          {/* Left: Logo */}
+          {/* Left:ss Logo */}
           <div className="flex-shrink-0 flex items-center">
             <NavLink to="/" className="flex items-center gap-2 group">
               <img
