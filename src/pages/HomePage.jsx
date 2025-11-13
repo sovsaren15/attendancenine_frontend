@@ -1,5 +1,5 @@
 import React from 'react'
-import { Camera, BarChart3 } from 'lucide-react'
+import { Camera, BarChart3, LayoutDashboard } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const HomePage = () => {
@@ -20,8 +20,8 @@ const HomePage = () => {
         </div>
 
         {/* Cards Section */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-          {/* Take Attendance Card */}
+        <div className="grid md:grid-cols-3 gap-6 max-w-7xl mx-auto">
+          {/* Take Attendance Card - Spans 2 cols on md, 1 on lg */}
           <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-xl">
             <div className="flex justify-center mb-6">
               <div className="bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl p-5 shadow-lg">
@@ -59,6 +59,27 @@ const HomePage = () => {
               <Link to="/records" className="bg-gradient-to-r from-[#3e6268] to-[#5a8a98] hover:from-[#2d4a4e] hover:to-[#4a7680] text-white font-semibold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
                 <BarChart3 className="w-5 h-5" />
                 View Attendance
+              </Link>
+            </div>
+          </div>
+
+          {/* Dashboard Card */}
+          <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-xl">
+            <div className="flex justify-center mb-6">
+              <div className="bg-gradient-to-br from-indigo-400 to-purple-500 rounded-2xl p-5 shadow-lg">
+                <LayoutDashboard className="w-10 h-10 text-white" />
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+              View Dashboard
+            </h2>
+            <p className="text-gray-600 text-center mb-8 leading-relaxed">
+              Get an overview of attendance stats and top performers.
+            </p>
+            <div className="flex justify-center">
+              <Link to="/dashboard" className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
+                <LayoutDashboard className="w-5 h-5" />
+                Go to Dashboard
               </Link>
             </div>
           </div>
