@@ -44,7 +44,7 @@ const AttendanceRecord = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3">
-            <Link to="/" className="">
+            <Link to="/home" className="">
               <img src="/attendance_logo.png" alt="Logo" className="w-28 h-auto" />
             </Link>
             </div>

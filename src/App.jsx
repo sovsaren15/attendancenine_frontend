@@ -16,14 +16,14 @@ function App() {
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         {/* Routes without Navbar */}
-        <Route path="/" element={<HomePage />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/AttendanceScanner" element={<AttendanceScanner />} />
         <Route path="/records" element={<AttendanceRecord />} />
         {/* Routes with Navbar */}
         <Route element={<Layout />}>
+        <Route path="/" element={<Dashboard />} />
           <Route path="/register" element={<EmployeeRegistration />} />
           <Route path="/employees" element={<EmployeeList />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/top" element={<TopPerformers />} />
           <Route path="/attendance" element={<AttendancePage />} />
         </Route>

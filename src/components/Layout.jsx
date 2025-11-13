@@ -3,8 +3,8 @@ import Navbar from "./Navbar"
 
 const Layout = () => {
   const location = useLocation()
-  const noNavbarPaths = ["/", "/records"];
-  const showNavbar = !noNavbarPaths.includes(location.pathname);
+  const noNavbarPaths = ["/records"]; // Removed "/" from this list
+  const showNavbar = !noNavbarPaths.includes(location.pathname) && location.pathname !== '/home' && location.pathname !== '/AttendanceScanner';
 
   return (
     <div className="App min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
