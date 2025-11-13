@@ -55,10 +55,20 @@ const TopPerformers = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen  flex justify-center items-center p-4">
+        <div className="text-center bg-white rounded-3xl p-12 shadow-xl">
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <div className="bg-[#3e6268]/10 rounded-full p-6 animate-pulse">
+                <User className="w-16 h-16 text-[#3e6268]" /> 
+              </div>
+              <div className="absolute inset-0 border-4 border-[#3e6268]/20 border-t-[#3e6268] rounded-full animate-spin"></div>
+            </div>
+          </div>
+          <p className="text-xl font-semibold text-gray-800">Loading Top Performers...</p>
+        </div>
       </div>
-    )
+    );
   }
 
   if (error) {

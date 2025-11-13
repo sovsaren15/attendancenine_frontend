@@ -10,6 +10,8 @@ const EmployeeList = React.lazy(() => import("./pages/EmployeeList.jsx"));
 const Dashboard = React.lazy(() => import("./pages/Dashboard.jsx"));
 const TopPerformers = React.lazy(() => import("./pages/TopPerformers.jsx"));
 const AttendancePage = React.lazy(() => import("./pages/AttendancePage.jsx"));
+const EditEmployee = React.lazy(() => import("./pages/EditEmployee.jsx"));
+
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
         {/* Routes with Navbar */}
         <Route element={<Layout />}>
         <Route path="/" element={<Dashboard />} />
+          <Route path="/edit/:id" element={<EditEmployee />} />
           <Route path="/register" element={<EmployeeRegistration />} />
           <Route path="/employees" element={<EmployeeList />} />
           <Route path="/top" element={<TopPerformers />} />

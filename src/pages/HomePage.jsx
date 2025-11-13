@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#2c4448] via-[#4a7680] to-[#7c9da2] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#2d3e50] via-[#34495e] to-[#3e6268] flex items-center justify-center p-4">
       <div className="max-w-6xl w-full">
         {/* Header Section */}
         <div className="text-center mb-12">

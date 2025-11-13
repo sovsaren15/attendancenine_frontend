@@ -37,6 +37,15 @@ export const attendanceAPI = {
     return response.json()
   },
 
+  getAllAttendance: async () => {
+    const response = await fetch(`${API_BASE_URL}/attendance/`, {
+      method: "GET",
+    });
+    if (!response.ok) throw new Error("Failed to fetch all attendance");
+    return response.json();
+  },
+
+
   deleteRecord: async (id) => {
     const response = await fetch(`${API_BASE_URL}/attendance/${id}`, {
       method: "DELETE",
