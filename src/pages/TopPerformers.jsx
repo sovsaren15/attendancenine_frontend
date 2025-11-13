@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import { User } from "lucide-react"
 import { attendanceAPI } from "../services/api"
 
 const TopPerformers = () => {

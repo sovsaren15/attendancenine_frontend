@@ -6,8 +6,8 @@ import { MapPin } from "lucide-react"
 
 // --- Location Configuration ---
 const OFFICE_LOCATION = {
-  latitude: 13.332962,
-  longitude: 103.974389,
+  latitude: 13.374875305258593,
+  longitude: 103.84243927547642,
 };
 const MAX_DISTANCE_METERS = 100; // 100-meter radius
 
