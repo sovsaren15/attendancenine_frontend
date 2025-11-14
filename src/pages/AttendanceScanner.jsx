@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react"
 import { loadFaceApiModels, detectFaces, compareFaces } from "../services/faceRecognition"
 import { employeeAPI, attendanceAPI } from "../services/api"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { MapPin } from "lucide-react"
 
 // --- Location Configuration ---
@@ -28,6 +28,7 @@ function getDistance(lat1, lon1, lat2, lon2) {
 }
 
 function AttendanceScanner() {
+  const navigate = useNavigate()
   const videoRef = useRef(null)
   const scanIntervalRef = useRef(null)
   const [scanning, setScanning] = useState(false)
@@ -166,7 +167,10 @@ function AttendanceScanner() {
                 type: type,
               });
               setMessage(`${type === 'check-in' ? 'Welcome' : 'Goodbye'}, ${matchedEmployee.name}! ${response.message}`);
-              setTimeout(() => setMessage(""), 3000);
+              // Navigate to attendance records after a short delay
+              setTimeout(() => {
+                navigate("/attendance-records");
+              }, 2000);
             } catch (error) {
               console.error("Error marking attendance:", error);
               if (error.response) {
