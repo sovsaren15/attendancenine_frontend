@@ -169,7 +169,7 @@ function AttendanceScanner() {
               setMessage(`${type === 'check-in' ? 'Welcome' : 'Goodbye'}, ${matchedEmployee.name}! ${response.message}`);
               // Navigate to attendance records after a short delay
               setTimeout(() => {
-                navigate("/attendance-records");
+                navigate("/records");
               }, 2000);
             } catch (error) {
               console.error("Error marking attendance:", error);
