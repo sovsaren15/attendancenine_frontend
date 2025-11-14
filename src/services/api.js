@@ -8,7 +8,7 @@ export const attendanceAPI = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         employeeId,
-        type, // 'check-in' or 'check-out'
+        type, // 'check-in' or 'check-out's
       }),
     })
     if (!response.ok) {
