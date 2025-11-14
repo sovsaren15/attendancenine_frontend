@@ -1,7 +1,8 @@
 import React, { Suspense } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Layout from "./components/Layout.jsx";
 
+const PrivateRoute = React.lazy(() => import("./components/PrivateRoute.jsx"));
 const HomePage = React.lazy(() => import("./pages/HomePage.jsx"));
 const AttendanceScanner = React.lazy(() => import("./pages/AttendanceScanner.jsx"));
 const AttendanceRecord = React.lazy(() => import("./pages/AttendanceRecord.jsx"));
@@ -11,25 +12,32 @@ const Dashboard = React.lazy(() => import("./pages/Dashboard.jsx"));
 const TopPerformers = React.lazy(() => import("./pages/TopPerformers.jsx"));
 const AttendancePage = React.lazy(() => import("./pages/AttendancePage.jsx"));
 const EditEmployee = React.lazy(() => import("./pages/EditEmployee.jsx"));
-
+const Login = React.lazy(() => import("./pages/Login.jsx"));
 
 function App() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
-        {/* Routes without Navbar */}
-        <Route path="/home" element={<HomePage />} />
+        {/* Public Routes */}
+        <Route path="/" element={<HomePage />} />
         <Route path="/AttendanceScanner" element={<AttendanceScanner />} />
         <Route path="/records" element={<AttendanceRecord />} />
-        {/* Routes with Navbar */}
-        <Route element={<Layout />}>
-        <Route path="/" element={<Dashboard />} />
-          <Route path="/edit/:id" element={<EditEmployee />} />
-          <Route path="/register" element={<EmployeeRegistration />} />
-          <Route path="/employees" element={<EmployeeList />} />
-          <Route path="/top" element={<TopPerformers />} />
-          <Route path="/attendance" element={<AttendancePage />} />
+        <Route path="/login" element={<Login />} />
+
+        {/* Private Routes */}
+        <Route element={<PrivateRoute />}>
+          <Route element={<Layout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/edit/:id" element={<EditEmployee />} />
+            <Route path="/register" element={<EmployeeRegistration />} />
+            <Route path="/employees" element={<EmployeeList />} />
+            <Route path="/top" element={<TopPerformers />} />
+            <Route path="/attendance" element={<AttendancePage />} />
+          </Route>
         </Route>
+
+        {/* Catch-all route for 404 Not Found */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
   );

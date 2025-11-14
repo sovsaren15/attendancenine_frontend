@@ -1,11 +1,18 @@
 import React from 'react'
-import { Camera, BarChart3 } from 'lucide-react'
+import { Camera, BarChart3, LogIn } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#2d3e50] via-[#34495e] to-[#3e6268] flex items-center justify-center p-4">
-      <div className="max-w-6xl w-full">
+      <div className="max-w-6xl w-full relative">
+        {/* Login Button */}
+        <div className="absolute top-0 right-0 p-2 sm:p-4 hidden sm:inline ">
+          <Link to="/login" className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-semibold rounded-full shadow-lg transition-all duration-300 flex items-center justify-center p-3 sm:py-2 sm:px-4 sm:gap-2 ">
+            <LogIn className="w-5 h-5" />
+            <span className="hidden sm:inline ">Login</span>
+          </Link>
+        </div>
         {/* Header Section */}
         <div className="text-center mb-12">
           <div className="flex justify-center items-center gap-2 mb-1">

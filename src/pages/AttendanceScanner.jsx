@@ -251,7 +251,7 @@ function AttendanceScanner() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-1">
-            <Link to="/home" className="">
+            <Link to="/" className="">
               <img src="/attendance_logo.png" alt="Logo" className="w-28 h-auto" />
             </Link>
           </div>

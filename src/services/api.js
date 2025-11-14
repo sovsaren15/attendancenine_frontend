@@ -1,5 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://attendancenine-backend2.vercel.app/api"
+// const API_BASE_URL = import.meta.env.VITE_API_URL || "https://attendancenine-backend2.vercel.app/api"
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://attendancenine-backend2-test.vercel.app/api"
 // Attendance API calls
 export const attendanceAPI = {
   markAttendance: async (employeeId, type) => {
@@ -111,3 +112,20 @@ export const employeeAPI = {
     return response.json()
   },
 }
+
+// Auth API calls
+export const authAPI = {
+  login: async (credentials) => {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(credentials),
+    });
+    if (!response.ok) {
+      const error = new Error("Failed to login");
+      error.response = await response.json(); // Attach response body to the error
+      throw error;
+    }
+    return response.json();
+  },
+};

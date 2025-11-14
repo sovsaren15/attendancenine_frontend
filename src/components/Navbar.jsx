@@ -46,9 +46,7 @@ const Navbar = () => {
           {/* Right: Links - using ml-auto to push them right */}
           <div className="hidden md:flex ml-auto"> {/* MODIFIED HERE */}
             <div className="flex items-center gap-2 bg-gray-50/50 rounded-2xl p-2">
-              <NavLink to="/" className={getNavLinkClass}>
-                <span>Dashboard</span>
-              </NavLink>
+
               <NavLink to="/employees" className={getNavLinkClass}>
                 <span>Employees</span>
               </NavLink>
@@ -60,9 +58,6 @@ const Navbar = () => {
               </NavLink>
               <NavLink to="/register" className={getNavLinkClass}>
                 <span>Add Employee</span>
-              </NavLink>
-              <NavLink to="/home" className={getNavLinkClass}>
-                <span>Scanner</span>
               </NavLink>
             </div>
           </div>
@@ -94,9 +89,10 @@ const Navbar = () => {
             : "-translate-y-full opacity-0 pointer-events-none"
         }`}
       >
+
         <div className="px-4 pt-3 pb-4 space-y-2">
           <NavLink
-            to="/"
+            to="/dashboard"
             className={({ isActive }) =>
               `block px-5 py-4 text-lg font-medium rounded-xl transition-all duration-200 flex items-center gap-3 ${
                 isActive
@@ -106,32 +102,36 @@ const Navbar = () => {
             }
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
             <span>Dashboard</span>
           </NavLink>
-          <NavLink
-            to="/home"
-            className={({ isActive }) =>
-              `block px-5 py-4 text-lg font-medium rounded-xl transition-all duration-200 flex items-center gap-3 ${
-                isActive
-                  ? "text-white bg-gradient-to-r from-[#3e6268] to-[#4a7680] shadow-md"
-                  : "text-gray-600 hover:text-[#3e6268] hover:bg-gray-50"
-              }`
-            }
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span>Scanner</span>
+          <NavLink to="/employees" className={getMobileNavLinkClass} onClick={() => setIsMobileMenuOpen(false)}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            <span>Employees</span>
+          </NavLink>
+          <NavLink to="/attendance" className={getMobileNavLinkClass} onClick={() => setIsMobileMenuOpen(false)}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            <span>Attendance</span>
+          </NavLink>
+          <NavLink to="/top" className={getMobileNavLinkClass} onClick={() => setIsMobileMenuOpen(false)}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16v4m-2-2h4m5 10v4m-2-2h4M17 3l-1.17.585A2 2 0 0115 5.414V6a2 2 0 01-2 2v0a2 2 0 01-2-2V5.414a2 2 0 01.83-1.585L13 3m-4 0l1.17.585A2 2 0 0011 5.414V6a2 2 0 002 2v0a2 2 0 002-2V5.414a2 2 0 00-.83-1.585L13 3m-4 0h4" /></svg>
+            <span>Top Performers</span>
+          </NavLink>
+          <NavLink to="/register" className={getMobileNavLinkClass} onClick={() => setIsMobileMenuOpen(false)}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+            <span>Add Employee</span>
           </NavLink>
         </div>
       </div>
     </nav>
   );
 };
+
+const getMobileNavLinkClass = ({ isActive }) =>
+  `block px-5 py-4 text-lg font-medium rounded-xl transition-all duration-200 flex items-center gap-3 ${
+    isActive
+      ? "text-white bg-gradient-to-r from-[#3e6268] to-[#4a7680] shadow-md"
+      : "text-gray-600 hover:text-[#3e6268] hover:bg-gray-50"
+  }`;
 
 export default Navbar;
