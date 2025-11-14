@@ -1,6 +1,5 @@
-// const API_BASE_URL = import.meta.env.VITE_API_URL || "https://attendancenine-backend2.vercel.app/api"
+ const API_BASE_URL = import.meta.env.VITE_API_URL || "https://attendancenine-backend2.vercel.app/api"
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://attendancenine-backend2-test.vercel.app/api"
 // Attendance API calls
 export const attendanceAPI = {
   markAttendance: async (employeeId, type) => {
