@@ -1,9 +1,13 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
-import { ArrowRight } from "lucide-react"
+import { useNavigate, Link } from "react-router-dom"
+import { loadFaceApiModels, detectFaces } from "../services/faceRecognition.js"
+import { employeeAPI } from "../services/api.js"
+import { ArrowRight } from "lucide-react" // Added an icon for the link
 
 function EmployeeRegistration() {
+  const navigate = useNavigate()
   const videoRef = useRef(null)
   const imageRef = useRef(null)
   const [formData, setFormData] = useState({
@@ -17,45 +21,114 @@ function EmployeeRegistration() {
   const [capturing, setCapturing] = useState(false)
   const [faceData, setFaceData] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  // --- REFACTORED: Message state now supports types ---
   const [notification, setNotification] = useState({ type: '', text: '' })
+  
   const [loading, setLoading] = useState(true)
   const [uploadedImage, setUploadedImage] = useState(null)
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => setLoading(false), 1500)
+    const initCamera = async () => {
+      const loaded = await loadFaceApiModels()
+      if (!loaded) {
+        setNotification({ type: 'error', text: "Failed to load face models" })
+        return
+      }
+      await startCamera()
+      setLoading(false)
+    }
+
+    initCamera()
+
+    return () => {
+      stopCamera()
+    }
   }, [])
 
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 640, height: 480 },
+      })
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+      }
+    } catch (error) {
+      setNotification({ type: 'error', text: "Camera access denied. Please allow camera access in your browser settings." })
+    }
+  }
+
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      videoRef.current.srcObject.getTracks().forEach((track) => track.stop())
+    }
+  }
+
   const captureFace = async () => {
-    setCapturing(true)
-    setNotification({ type: 'info', text: 'Capturing... Please look at the camera.' })
-    
-    // Simulate face capture
-    setTimeout(() => {
-      setFaceData([1, 2, 3, 4, 5])
+    if (!videoRef.current) return
+
+    try {
+      setCapturing(true)
+      setNotification({ type: 'info', text: 'Capturing... Please look at the camera.' })
+      const detections = await detectFaces(videoRef.current)
+
+      if (detections.length === 0) {
+        setNotification({ type: 'error', text: "No face detected. Please try again." })
+        setCapturing(false)
+        return
+      }
+
+      if (detections.length > 1) {
+        setNotification({ type: 'error', text: "Multiple faces detected. Please capture one face at a time." })
+        setCapturing(false)
+        return
+      }
+
+      // Convert Float32Array to a regular array
+      setFaceData(Array.from(detections[0].descriptor))
       setNotification({ type: 'success', text: "Face captured successfully!" })
       setCapturing(false)
-    }, 1500)
+    } catch (error) {
+      console.error("Error capturing face:", error)
+      setNotification({ type: 'error', text: "Error capturing face" })
+      setCapturing(false)
+    }
   }
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
 
+    stopCamera()
     const imageUrl = URL.createObjectURL(file)
     setUploadedImage(imageUrl)
-    setFaceData(null)
-    
-    setCapturing(true)
-    setNotification({ type: 'info', text: "Detecting face from image..." })
-    
-    // Simulate face detection
-    setTimeout(() => {
-      setFaceData([1, 2, 3, 4, 5])
-      setNotification({ type: 'success', text: "Face captured successfully from image!" })
-      setCapturing(false)
-    }, 1500)
-    
+    setFaceData(null) 
+
+    const imageElement = document.createElement("img")
+    imageElement.src = imageUrl
+
+    imageElement.onload = async () => {
+      try {
+        setCapturing(true)
+        setNotification({ type: 'info', text: "Detecting face from image..." })
+        const detections = await detectFaces(imageElement)
+
+        if (detections.length === 0) {
+          setNotification({ type: 'error', text: "No face detected in the image. Please try another one." })
+        } else if (detections.length > 1) {
+          setNotification({ type: 'error', text: "Multiple faces detected. Please use an image with only one face." })
+        } else {
+          setFaceData(Array.from(detections[0].descriptor))
+          setNotification({ type: 'success', text: "Face captured successfully from image!" })
+        }
+      } catch (error) {
+        console.error("Error detecting face from image:", error)
+        setNotification({ type: 'error', text: "Error processing image for face detection." })
+      } finally {
+        setCapturing(false)
+      }
+    }
     e.target.value = ""
   }
 
@@ -67,7 +140,7 @@ function EmployeeRegistration() {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     if (!faceData || !formData.name || !formData.email) {
@@ -75,18 +148,44 @@ function EmployeeRegistration() {
       return
     }
 
-    setIsSubmitting(true)
-    
-    // Simulate registration
-    setTimeout(() => {
-      setNotification({ type: 'success', text: "Employee registered successfully! Redirecting..." })
+    try {
+      setIsSubmitting(true)
+      const registrationData = {
+        name: formData.name,
+        email: formData.email,
+        department: formData.department || "General",
+        faceDescriptor: faceData,
+      }
+
+      if (formData.dob) registrationData.dob = formData.dob;
+      if (formData.startWorkingDate) registrationData.startWorkingDate = formData.startWorkingDate;
+      if (formData.sex) registrationData.sex = formData.sex;
+      
+      const response = await employeeAPI.register(registrationData)
+
+      if (response.success) {
+        setNotification({ type: 'success', text: "Employee registered successfully! Redirecting..." })
+        setTimeout(() => {
+          navigate("/employees")
+        }, 2000)
+      }
+    } catch (error) {
+      console.error("Registration error:", error)
+      if (error.response && typeof error.response.json === 'function') {
+        const errorData = await error.response.json();
+        setNotification({ type: 'error', text: errorData.error || "Failed to register employee." });
+      } else {
+        setNotification({ type: 'error', text: error.message || "Failed to register employee." });
+      }
+    } finally {
       setIsSubmitting(false)
-    }, 2000)
+    }
   }
 
+  // --- UPDATED: Consistent Loading Screen ---
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center p-4">
+      <div className="min-h-screen  flex justify-center items-center p-4">
         <div className="text-center bg-white rounded-3xl p-12 shadow-xl">
           <div className="flex justify-center mb-6">
             <div className="relative">
@@ -105,24 +204,27 @@ function EmployeeRegistration() {
   }
 
   return (
-    <div className="min-h-screen  p-4 md:p-8">
-  
+    // --- UPDATED: Added consistent page wrapper ---
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
+      
+      {/* --- UPDATED: Improved Header --- */}
+      <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
+        <h2 className="text-3xl font-bold text-gray-800">Employee Registration</h2>
+        <Link to="/employees" className="text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-2 transition-colors">
+          View Employee List
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
 
       <div className="bg-white rounded-3xl shadow-xl p-6 md:p-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Employee Registration</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Video Feed */}
           <div className="flex flex-col gap-4">
-            <div className="bg-black rounded-lg overflow-hidden relative  flex items-center justify-center" style={{height:457}}>
+            <div className="bg-black rounded-lg overflow-hidden relative h-96 flex items-center justify-center">
               {uploadedImage ? (
                 <img ref={imageRef} src={uploadedImage} alt="Uploaded preview" className="h-full w-full object-contain" />
               ) : (
                 <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
-              )}
-              {!uploadedImage && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
-                  <p className="text-gray-400 text-lg">Camera feed will appear here</p>
-                </div>
               )}
             </div>
 
@@ -142,7 +244,7 @@ function EmployeeRegistration() {
               <label
                 htmlFor="imageUpload"
                 className={`w-full py-3 px-6 rounded-lg font-semibold text-white text-center transition cursor-pointer ${
-                  capturing ? "bg-gray-400 cursor-not-allowed" : "bg-[#3e6268] hover:bg-[#2d4a4f]"
+                  capturing ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
                 }`}
               >
                 Upload Image
@@ -156,6 +258,7 @@ function EmployeeRegistration() {
                   setUploadedImage(null)
                   setFaceData(null)
                   setNotification({ type: '', text: '' })
+                  startCamera()
                   if (uploadedImage) URL.revokeObjectURL(uploadedImage)
                 }}
                 className="w-full py-2 px-4 rounded-lg font-semibold text-white bg-gray-600 hover:bg-gray-700 transition"
@@ -164,11 +267,12 @@ function EmployeeRegistration() {
               </button>
             )}
 
+            {/* --- UPDATED: All-in-one notification block --- */}
             {notification.text && (
               <div className={`p-4 rounded-lg text-center font-semibold ${
                 notification.type === 'success' ? 'bg-green-100 text-green-700' :
                 notification.type === 'error'   ? 'bg-red-100 text-red-700' :
-                'bg-blue-100 text-blue-700'
+                'bg-blue-100 text-blue-700' // 'info'
               }`}>
                 {notification.text}
               </div>
@@ -176,7 +280,7 @@ function EmployeeRegistration() {
           </div>
 
           {/* Registration Form */}
-          <div className="flex flex-col gap-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
               <input
@@ -185,8 +289,8 @@ function EmployeeRegistration() {
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3e6268]"
-                placeholder=""
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                placeholder="John Doe"
               />
             </div>
 
@@ -198,8 +302,8 @@ function EmployeeRegistration() {
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3e6268]"
-                placeholder=""
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                placeholder="john@example.com"
               />
             </div>
 
@@ -210,8 +314,8 @@ function EmployeeRegistration() {
                 name="department"
                 value={formData.department}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3e6268]"
-                placeholder=""
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                placeholder="Engineering"
               />
             </div>
 
@@ -223,7 +327,7 @@ function EmployeeRegistration() {
                   name="dob"
                   value={formData.dob}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3e6268]"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
                 />
               </div>
               <div>
@@ -232,7 +336,7 @@ function EmployeeRegistration() {
                   name="sex"
                   value={formData.sex}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3e6268] bg-white"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 bg-white"
                 >
                   <option value="">Select...</option>
                   <option value="male">Male</option>
@@ -249,17 +353,17 @@ function EmployeeRegistration() {
                 name="startWorkingDate"
                 value={formData.startWorkingDate}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3e6268]"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
               />
             </div>
 
             <button
-              onClick={handleSubmit}
+              type="submit"
               disabled={!faceData || !formData.name || !formData.email || isSubmitting}
               className={`w-full py-3 px-6 rounded-lg font-semibold text-white transition ${
                 !faceData || !formData.name || !formData.email || isSubmitting
                   ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-[#3e6268] hover:bg-[#2d4a4f]"
+                  : "bg-indigo-600 hover:bg-indigo-700"
               } flex items-center justify-center`}
             >
               {isSubmitting && (
@@ -270,7 +374,7 @@ function EmployeeRegistration() {
               )}
               {isSubmitting ? "Registering..." : "Register Employee"}
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </div>
